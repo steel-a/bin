@@ -26,7 +26,7 @@ if [ -z "$(df | grep /tmp/mnt)" ]; then echo "Can't mount. Exit." && exit 1; els
 
 # Create snapshot
 cd /tmp/mnt
-sudo btrfs subvolume snapshot $subvolume $snap_vol/$date$subvolume
+sudo btrfs subvolume snapshot $subvolume $snap_vol/$date$(echo $subvolume | sed 's/@/-/g')
 cd /
 sudo umount /tmp/mnt
 exit 0
