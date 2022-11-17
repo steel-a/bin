@@ -1,0 +1,13 @@
+device="$(ip a | grep '^[0-9]: [a-z0-9]*:' | grep -o '[a-z0-9]*w[a-z0-9]*')"
+echo Wireless device: $device
+key="$(wpa_passphrase $1 $2 | grep -o '[^#]psk=[0-9a-z]*' | sed 's/psk=//g' )"
+
+echo "source /etc/network/interfaces.d/*"	> /etc/network/interfaces
+echo "auto lo"					>> /etc/network/interfaces
+echo "iface lo inet loopback"			>> /etc/network/interfaces
+echo "auto "$device				>> /etc/network/interfaces
+echo "iface "$device" inet dhcp"		>> /etc/network/interfaces
+echo "  wpa-ssid "$1				>> /etc/network/interfaces
+echo "  wpa-psk "$key				>> /etc/network/interfaces
+
+/etc/init.d/networking restart
