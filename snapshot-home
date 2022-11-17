@@ -4,24 +4,29 @@ date="$(date --rfc-3339='seconds' | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0
 echo Date=$date
 
 # Get disk
-disk="$(df -Th | grep btrfs | grep /mnt$ | cut -d' ' -f 1)"
+disk="$(df -Th | grep btrfs | grep /$ | cut -d' ' -f 1)"
 echo Disk=$disk
 if [ -z $disk ]; then echo "No btrfs disk found mounted at /. Exit" && exit 1; fi
 
 # Get snapshots subvolume
-snap_vol="$(sudo btrfs subvolume list /mnt | grep -o @snapshots$)"
+snap_vol="$(sudo btrfs subvolume list / | grep -o @snapshots$)"
 echo SnapVol=$snap_vol
 if [ -z $snap_vol ]; then echo "No @snapshots subvolume found. Exit." && exit 1; fi
 
 # Verify if target subvolume exists
-subvolume="$(sudo btrfs subvolume list /mnt | grep -o @home$)"
+subvolume="$(sudo btrfs subvolume list / | grep -o @home$)"
 echo Subvolume=$subvolume
 if [ -z $subvolume ]; then echo "No target subvolume found. Exit." && exit 1; fi
 
 
-# Create dir to mount
+# Create and mount dir
 if [ ! -d /tmp/mnt ]; then sudo mkdir -p /tmp/mnt; fi
-sudo mount $disk /tmp/mnt
+if [ -z "$(df | grep /tmp/mnt)" ]; then sudo mount $disk /tmp/mnt; fi
+if [ -z "$(df | grep /tmp/mnt)" ]; then echo "Can't mount. Exit." && exit 1; else echo "$disk mounted in /tmp/mnt"; fi
 
-
+# Create snapshot
+cd /tmp/mnt
+sudo btrfs subvolume snapshot $subvolume $snap_vol/$date-$subvolume
+cd /
+umount /tmp/mnt
 exit 0
