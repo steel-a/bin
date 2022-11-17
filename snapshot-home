@@ -1,6 +1,6 @@
 #!/bin/bash
 
-date="$(date --rfc-3339='seconds' | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}')"
+date="$(date --rfc-3339='seconds' | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}' | sed 's/ /_/g')"
 echo Date=$date
 
 # Get disk
@@ -26,7 +26,7 @@ if [ -z "$(df | grep /tmp/mnt)" ]; then echo "Can't mount. Exit." && exit 1; els
 
 # Create snapshot
 cd /tmp/mnt
-sudo btrfs subvolume snapshot $subvolume $snap_vol/$date-$subvolume
+sudo btrfs subvolume snapshot $subvolume $snap_vol/$date$subvolume
 cd /
-umount /tmp/mnt
+sudo umount /tmp/mnt
 exit 0
