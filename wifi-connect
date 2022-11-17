@@ -1,3 +1,5 @@
+#!/bin/bash
+
 device="$(ip a | grep '^[0-9]: [a-z0-9]*:' | grep -o '[a-z0-9]*w[a-z0-9]*')"
 echo Wireless device: $device
 key="$(wpa_passphrase $1 $2 | grep -o '[^#]psk=[0-9a-z]*' | sed 's/psk=//g' )"
