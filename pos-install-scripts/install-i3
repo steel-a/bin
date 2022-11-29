@@ -12,7 +12,8 @@ sudo apt update && sudo apt upgrade
 
 # NVIDIA driver if necessary
 #if lspci |grep NVIDIA; then sudo apt install nvidia-driver; fi
-
+#sudo apt install nvidia-detect
+#sudo apt-get install linux-headers-`uname -r`
 
 # Create dotfiles
 mv ~/.config/i3/config ~/.config/i3/config.old && ln -s ~/.config/mydotfiles/dotfiles/i3-config ~/.config/i3/config
