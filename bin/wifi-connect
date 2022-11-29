@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Input variables check
+if [ -z "$1" ]; then echo "Usage: wifi-connect SSID Password fixed-ip (optional)" && exit 1; fi
+if [ -z "$2" ]; then echo "Usage: wifi-connect SSID Password fixed-ip (optional)" && exit 1; fi
+
+
+device="$(ip a | grep '^[0-9]: [a-z0-9]*:' | grep -o '[a-z0-9]*w[a-z0-9]*')"
+echo Wireless device: $device
+key="$(wpa_passphrase $1 $2 | grep -o '[^#]psk=[0-9a-z]*' | sed 's/psk=//g' )"
+
+echo "source /etc/network/interfaces.d/*"	> interfaces
+echo "auto lo"					>> interfaces
+echo "iface lo inet loopback"			>> interfaces
+echo "auto "$device				>> interfaces
+
+if [ -z "$3" ]
+then
+      echo "iface "$device" inet dhcp"		>> interfaces
+else
+      echo "iface "$device" inet static"	>> interfaces
+      echo "  address $3"			>> interfaces
+      echo "  netmask 255.255.255.0"		>> interfaces
+
+      ipreg='([0-9^]+\.[0-9^]+\.[0-9^]+\.)'
+      if [[ $3 =~ $ipreg ]] ; then
+          first_part=${BASH_REMATCH[1]}
+          echo "First Part of IP: $first_part"
+      fi
+      if [ -z "$first_part" ]; then echo "Invalid fixed IP addres" && exit 1; fi
+
+      echo "  gateway ${first_part}1"		>> interfaces
+      echo "  broadcast ${first_part}255"	>> interfaces
+      echo "  dns-nameservers ${first_part}1"	>> interfaces
+fi
+
+echo "  wpa-ssid "$1				>> interfaces
+echo "  wpa-psk "$key				>> interfaces
+
+sudo rm /etc/network/interfaces && sudo cp interfaces /etc/network/ && rm interfaces
+
+sudo /etc/init.d/networking restart
+
+exit 0

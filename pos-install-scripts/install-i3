@@ -1,0 +1,43 @@
+#!/bin/bash
+sudo apt update && sudo apt upgrade
+sudo apt install --no-install-recommends software-properties-common\
+                                         xserver-xorg-core xserver-xorg-video-intel x11-xserver-utils x11-xkb-utils x11-utils xinit\
+                                         xserver-xorg-input-synaptics xserver-xorg-input-evdev xterm i3 dmenu\
+                                         pulseaudio alsa-utils pavucontrol\
+                                         firefox-esr
+sudo apt-add-repository contrib
+sudo apt-add-repository non-free
+sudo apt update && sudo apt upgrade
+
+
+# NVIDIA driver if necessary
+#if lspci |grep NVIDIA; then sudo apt install nvidia-driver; fi
+
+
+# Create dotfiles
+mv ~/.config/i3/config ~/.config/i3/config.old && ln -s ~/.config/mydotfiles/dotfiles/i3-config ~/.config/i3/config
+mv ~/.config/i3status/config ~/.config/i3status/config.old && ln -s ~/.config/mydotfiles/dotfiles/i3-status-config ~/.config/i3status/config
+
+# Autologin
+echo "[Service]" > override.conf
+echo "ExecStart=" >> override.conf
+echo "ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM" >> override.conf
+sudo rm /etc/systemd/system/getty@tty1.service.d/override.conf && sudo cp override.conf /etc/systemd/system/getty@tty1.service.d/ && rm override.conf
+sudo mv /etc/systemd/system/getty.target.wants/getty@tty1.service /etc/systemd/system/getty.target.wants/getty@tty1.service.old
+sudo sed -i "s|ExecStart=|ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM\n#ExecStart=|g" getty@tty1.service
+
+# Configure trackpad
+sudo mkdir -p /etc/X11/xorg.conf.d
+sudo rm /etc/X11/xorg.conf.d/*-synaptics.conf
+sudo cp /usr/share/X11/xorg.conf.d/*-synaptics.conf /etc/X11/xorg.conf.d/
+sudo sed -i 's/Identifier "touchpad catchall"/Identifier "touchpad catchall"\n        Option "TapButton1" "1"\n        Option "TapButton2" "3"\n        Option "VertScrollDelta" "-111"\n        Option "HorizScrollDelta" "-111"/g' /etc/X11/xorg.conf.d/*-synaptics.conf
+
+# Create .xinitrc
+echo "#!/bin/sh" > ~/.xinitrc
+echo "exec i3" >> ~/.xinitrc
+
+# Append my bin directory to .bashrc
+if ! grep -q "export PATH=/home/" ~/.bashrc; then echo 'export PATH=/home/$USER/.config/mydotfiles/bin:$PATH' >> ~/.bashrc; fi 
+
+# Append startx on .bashrc
+if ! grep -q startx ~/.bashrc; then echo "if [[ -z \$DISPLAY ]] && [[ \$(tty) = /dev/tty1 ]]; then startx; fi" >> ~/.bashrc; fi 
