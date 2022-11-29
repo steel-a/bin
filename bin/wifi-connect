@@ -32,6 +32,7 @@ else
       echo "  gateway ${first_part}1"		>> interfaces
       echo "  broadcast ${first_part}255"	>> interfaces
       echo "  dns-nameservers ${first_part}1"	>> interfaces
+      echo "nameserver ${first_part}1"		>  /etc/resolv.conf
 fi
 
 echo "  wpa-ssid "$1				>> interfaces
