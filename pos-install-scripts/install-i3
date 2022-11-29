@@ -3,12 +3,13 @@ sudo apt update && sudo apt upgrade
 sudo apt install --no-install-recommends software-properties-common\
                                          xserver-xorg-core xserver-xorg-video-intel x11-xserver-utils x11-xkb-utils x11-utils xinit\
                                          xserver-xorg-input-synaptics xserver-xorg-input-evdev xterm i3 dmenu\
-                                         pulseaudio alsa-utils pavucontrol\
+                                         brightnessctl pulseaudio alsa-utils pavucontrol\
                                          firefox-esr
 sudo apt-add-repository contrib
 sudo apt-add-repository non-free
 sudo apt update && sudo apt upgrade
 
+sudo mkdir -p /usr/share/desktop-directories
 
 # NVIDIA driver if necessary
 #if lspci |grep NVIDIA; then sudo apt install nvidia-driver; fi
@@ -16,16 +17,20 @@ sudo apt update && sudo apt upgrade
 #sudo apt-get install linux-headers-`uname -r`
 
 # Create dotfiles
-mv ~/.config/i3/config ~/.config/i3/config.old && ln -s ~/.config/mydotfiles/dotfiles/i3-config ~/.config/i3/config
-mv ~/.config/i3status/config ~/.config/i3status/config.old && ln -s ~/.config/mydotfiles/dotfiles/i3-status-config ~/.config/i3status/config
+mkdir -p ~/.config/i3
+mkdir -p ~/.config/i3status
+mv ~/.config/i3/config ~/.config/i3/config.old
+ln -s ~/.config/mydotfiles/dotfiles/i3-config ~/.config/i3/config
+mv ~/.config/i3status/config ~/.config/i3status/config.old
+ln -s ~/.config/mydotfiles/dotfiles/i3-status-config ~/.config/i3status/config
 
 # Autologin
 echo "[Service]" > override.conf
 echo "ExecStart=" >> override.conf
 echo "ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM" >> override.conf
 sudo rm /etc/systemd/system/getty@tty1.service.d/override.conf && sudo cp override.conf /etc/systemd/system/getty@tty1.service.d/ && rm override.conf
-sudo mv /etc/systemd/system/getty.target.wants/getty@tty1.service /etc/systemd/system/getty.target.wants/getty@tty1.service.old
-sudo sed -i "s|ExecStart=|ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM\n#ExecStart=|g" getty@tty1.service
+sudo cp /etc/systemd/system/getty.target.wants/getty@tty1.service /etc/systemd/system/getty.target.wants/getty@tty1.service.old
+sudo sed -i "s|ExecStart=|ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM\n#ExecStart=|g" /etc/systemd/system/getty@tty1.service
 
 # Configure trackpad
 sudo mkdir -p /etc/X11/xorg.conf.d
