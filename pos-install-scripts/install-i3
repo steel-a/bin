@@ -48,3 +48,8 @@ if ! grep -q "export PATH=/home/" ~/.bashrc; then echo 'export PATH=/home/$USER/
 
 # Append startx on .bashrc
 if ! grep -q startx ~/.bashrc; then echo "if [[ -z \$DISPLAY ]] && [[ \$(tty) = /dev/tty1 ]]; then startx; fi" >> ~/.bashrc; fi 
+
+# Configure hd-idle
+echo 'HD_IDLE_OPTS="-a sdb -i 900"' > /tmp/hd-idle && sudo cp /tmp/hd-idle /etc/default/hd-idle
+sudo systemctl start hd-idle
+sudo systemctl enable hd-idle
