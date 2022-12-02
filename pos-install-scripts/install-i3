@@ -1,6 +1,7 @@
 #!/bin/bash
 sudo apt update && sudo apt upgrade
 sudo apt install --no-install-recommends software-properties-common\
+                                         hd-idle dosfstools ntfs-3g\
                                          xserver-xorg-core xserver-xorg-video-intel x11-xserver-utils x11-xkb-utils x11-utils xinit\
                                          xserver-xorg-input-synaptics xserver-xorg-input-evdev xterm i3 dmenu\
                                          brightnessctl pulseaudio alsa-utils pavucontrol\
