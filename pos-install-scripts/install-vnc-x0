@@ -2,4 +2,4 @@ sudo apt install tigervnc-scraping-server 
 vncpasswd
 
 # Append my bin directory to .bashrc
-if ! grep -q "x0vncserver" ~/.config/i3/config; then echo 'exec --no-startup-id x0vncserver -localhost=no -PasswordFile /home/stella/.vnc/passwd :0' >> ~/.config/i3/config
+if ! grep -q "x0vncserver" ~/.config/i3/config; then echo 'exec --no-startup-id x0vncserver -localhost=no -PasswordFile /home/stella/.vnc/passwd :0' >> ~/.config/i3/config; fi
