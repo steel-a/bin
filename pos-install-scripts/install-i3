@@ -30,8 +30,8 @@ echo "[Service]" > override.conf
 echo "ExecStart=" >> override.conf
 echo "ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM" >> override.conf
 sudo rm /etc/systemd/system/getty@tty1.service.d/override.conf && sudo cp override.conf /etc/systemd/system/getty@tty1.service.d/ && rm override.conf
-sudo cp /etc/systemd/system/getty.target.wants/getty@tty1.service /etc/systemd/system/getty.target.wants/getty@tty1.service.old
-sudo sed -i "s|ExecStart=|ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM\n#ExecStart=|g" /etc/systemd/system/getty.target.wants/getty@tty1.service
+sudo cp /lib/systemd/system/getty@.service /lib/systemd/system/getty@.service.old
+sudo sed -i "s|ExecStart=|ExecStart=-/sbin/agetty --autologin $USER --noclear %I $TERM\n#ExecStart=|g" /lib/systemd/system/getty@.service
 
 # Configure trackpad
 sudo mkdir -p /etc/X11/xorg.conf.d
