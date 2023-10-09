@@ -1,0 +1,11 @@
+#!/bin/bash
+DIST=$(getDist)
+
+
+if [ "$DIST" = "Ubuntu" ] || [ "$DIST" = "Debian" ]; then
+    sudo apt-get install --yes $1 $2 $3 $4 $5 $6 $7 $8 $9
+    exit 0
+else
+    exit 1
+fi
+

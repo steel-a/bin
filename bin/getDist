@@ -1,0 +1,12 @@
+#!/bin/bash
+DIST=$(uname -a |grep -o Ubuntu)
+
+if [ -z "$DIST" ]
+then
+      exit 1
+else
+      echo $DIST
+      exit 0
+fi
+
+

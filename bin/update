@@ -1,0 +1,11 @@
+#!/bin/bash
+DIST=$(getDist)
+
+
+if [ "$DIST" = "Ubuntu" ] || [ "$DIST" = "Debian" ]; then
+    sudo apt-get update --yes
+    exit 0
+else
+    exit 1
+fi
+

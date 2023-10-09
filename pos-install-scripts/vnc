@@ -1,0 +1,12 @@
+inst tigervnc-standalone-server
+
+mkdir -p /home/$USER/.vnc
+echo "securitytypes=None"                   > /home/$USER/.vnc/config
+echo "desktop=sandbox"                     >> /home/$USER/.vnc/config
+echo "geometry=1366x768"                   >> /home/$USER/.vnc/config
+echo "localhost=no"                        >> /home/$USER/.vnc/config
+echo "alwaysshared"                        >> /home/$USER/.vnc/config
+echo "session=i3"                          >> /home/$USER/.vnc/config
+chown -R $USER:$USER /home/$USER/
+
+#runuser -l $USER -c 'vncserver :0' &
